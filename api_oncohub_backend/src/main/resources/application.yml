@@ -1,0 +1,41 @@
+spring:
+  main:
+    banner-mode: off
+  datasource:
+    url: jdbc:sqlserver://onco-svr.database.windows.net:1433;database=oncoDb;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30
+    username: oncoadmin@onco-svr
+    password: Mareparolagrea1234!
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 100MB
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+
+  # Dev tools configuration
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    com.medical: DEBUG
+
+# Server configuration
+server:
+  port: 8080
+  error:
+    include-message: always
+    include-binding-errors: always
