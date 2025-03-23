@@ -17,6 +17,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        default_schema: xxapi
     show-sql: true
 
   # Dev tools configuration
