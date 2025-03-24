@@ -26,7 +26,7 @@ public class ApiKey {
     @Column(name = "KEY_VALUE", nullable = false, unique = true)
     private String keyValue;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION", unique = true)
     private String description;
 
     @Column(name = "IS_ACTIVE")

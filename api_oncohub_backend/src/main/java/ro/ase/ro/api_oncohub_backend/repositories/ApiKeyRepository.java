@@ -7,6 +7,6 @@ import java.util.Optional;
 
 public interface ApiKeyRepository extends JpaRepository<ApiKey, Long> {
     Optional<ApiKey> findByKeyValue(String keyValue);
-
+    Optional<ApiKey> findByDescription(String description);
     Optional<ApiKey> findByKeyValueAndIsActiveTrue(String keyValue);
 }
