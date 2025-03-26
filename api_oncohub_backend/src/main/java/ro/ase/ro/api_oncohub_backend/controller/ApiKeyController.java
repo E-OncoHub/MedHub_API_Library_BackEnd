@@ -3,12 +3,10 @@ package ro.ase.ro.api_oncohub_backend.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import ro.ase.ro.api_oncohub_backend.dtos.ApiKeyRequestDto;
-import ro.ase.ro.api_oncohub_backend.dtos.ApiKeyResponseDto;
+import org.springframework.web.bind.annotation.*;
+import ro.ase.ro.api_oncohub_backend.dtos.apiKey.ApiKeyByDescriptionResponseDto;
+import ro.ase.ro.api_oncohub_backend.dtos.apiKey.ApiKeyRequestDto;
+import ro.ase.ro.api_oncohub_backend.dtos.apiKey.ApiKeyResponseDto;
 import ro.ase.ro.api_oncohub_backend.exceptions.DuplicateApiKeyException;
 import ro.ase.ro.api_oncohub_backend.exceptions.ErrorResponse;
 import ro.ase.ro.api_oncohub_backend.exceptions.NullApiKeyException;
@@ -32,6 +30,18 @@ public class ApiKeyController {
                       apiKey.getExpiresAt()
                   ));
         } catch (DuplicateApiKeyException | NullApiKeyException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getApiKey(@RequestBody ApiKeyRequestDto requestDto) {
+        try {
+            String keyValue = apiKeyService.getApiKeyByDescription(requestDto.description());
+            return  ResponseEntity.status(HttpStatus.OK)
+                    .body(new ApiKeyByDescriptionResponseDto(keyValue));
+        } catch (NullApiKeyException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ErrorResponse(e.getMessage()));
         }

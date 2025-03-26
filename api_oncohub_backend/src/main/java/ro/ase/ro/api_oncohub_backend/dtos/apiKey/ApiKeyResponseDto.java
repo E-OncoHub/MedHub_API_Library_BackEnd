@@ -1,4 +1,4 @@
-package ro.ase.ro.api_oncohub_backend.dtos;
+package ro.ase.ro.api_oncohub_backend.dtos.apiKey;
 
 import java.time.LocalDateTime;
 

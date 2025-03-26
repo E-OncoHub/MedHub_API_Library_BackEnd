@@ -3,6 +3,7 @@ package ro.ase.ro.api_oncohub_backend.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ro.ase.ro.api_oncohub_backend.exceptions.DuplicateApiKeyException;
+import ro.ase.ro.api_oncohub_backend.exceptions.NoKeyForDescriptionException;
 import ro.ase.ro.api_oncohub_backend.exceptions.NullApiKeyException;
 import ro.ase.ro.api_oncohub_backend.models.ApiKey;
 import ro.ase.ro.api_oncohub_backend.repositories.ApiKeyRepository;
@@ -18,6 +19,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ApiKeyService {
     private final ApiKeyRepository apiKeyRepository;
+
+    public String getApiKeyByDescription(String description) {
+        return apiKeyRepository.findByDescription(description)
+                .map(ApiKey::getKeyValue)
+                .orElseThrow(() -> new NoKeyForDescriptionException("No API Key found for description " + description));
+    }
 
     public ApiKey generateApiKey(String description) {
         if (description == null || description.isBlank()) {
