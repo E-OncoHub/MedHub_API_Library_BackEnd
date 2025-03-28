@@ -21,9 +21,15 @@ public class ConsultationController {
     @PostMapping
     public ResponseEntity<?> createConsultation(@RequestBody CreateConsultationRequestDto consultationRequestDto) {
         try {
-            var accessID = consultationService.createConsultation(consultationRequestDto);
+            CreateConsultationResponsetDto createdConsultation = consultationService.createConsultation(consultationRequestDto);
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(new CreateConsultationResponsetDto(accessID));
+                    .body(new CreateConsultationResponsetDto(
+                            createdConsultation.accessId(),
+                            createdConsultation.accessLink(),
+                            createdConsultation.diagnositc(),
+                            createdConsultation.firstLine(),
+                            createdConsultation.secondLine()
+                    ));
         } catch (InvalidConsultationDataException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(e.getMessage());
