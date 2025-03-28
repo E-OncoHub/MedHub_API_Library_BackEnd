@@ -1,14 +1,18 @@
 package ro.ase.ro.api_oncohub_backend.services;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ro.ase.ro.api_oncohub_backend.dtos.consultation.CreateConsultationRequestDto;
 import ro.ase.ro.api_oncohub_backend.dtos.consultation.CreateConsultationResponsetDto;
+import ro.ase.ro.api_oncohub_backend.dtos.consultation.GetConsultationByClientDto;
 import ro.ase.ro.api_oncohub_backend.dtos.esmo.EsmoResult;
 import ro.ase.ro.api_oncohub_backend.dtos.esmo.TreatmentItemDto;
+import ro.ase.ro.api_oncohub_backend.exceptions.ConsultationAlreadyViewedException;
 import ro.ase.ro.api_oncohub_backend.exceptions.InvalidConsultationDataException;
+import ro.ase.ro.api_oncohub_backend.exceptions.ConsultationNotFoundException;
 import ro.ase.ro.api_oncohub_backend.models.Consultation;
 import ro.ase.ro.api_oncohub_backend.models.ConsultationAccessManager;
 import ro.ase.ro.api_oncohub_backend.repositories.ConsultationAccessManagerRepository;
@@ -16,7 +20,6 @@ import ro.ase.ro.api_oncohub_backend.repositories.ConsultationRepository;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +29,55 @@ public class ConsultationService {
     private final ConsultationRepository consultationRepository;
     private final ConsultationAccessManagerRepository consultationAccessManagerRepository;
     private final ObjectMapper objectMapper;
+
+    public GetConsultationByClientDto getNonAccessedConsultationById(UUID uuid) throws ConsultationNotFoundException {
+        ConsultationAccessManager consultationAccessManager = consultationAccessManagerRepository.findByIdAndIsViewedIsFalse(uuid)
+                .orElseThrow(() -> {
+                    if (consultationAccessManagerRepository.existsById(uuid)) {
+                        return new ConsultationAlreadyViewedException("This consultation has already been viewed.");
+                    } else {
+                        return new ConsultationNotFoundException("Consultation not found");
+                    }
+                });
+
+        Consultation consultation = consultationAccessManager.getConsultation();
+
+        List<TreatmentItemDto> firstLine;
+        List<TreatmentItemDto> secondLine;
+
+        try {
+            firstLine = objectMapper.readValue(
+                    consultation.getFirstLineTreatment(),
+                    new TypeReference<>() {}
+            );
+
+            secondLine = objectMapper.readValue(
+                    consultation.getSecondLineTreatment(),
+                    new TypeReference<>() {}
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse treatment data", e);
+        }
+
+        consultationAccessManager.setIsViewed(true);
+        consultationAccessManagerRepository.save(consultationAccessManager);
+
+        return new GetConsultationByClientDto(
+                consultation.getProtocolCarcMamInvaz(),
+                consultation.getEr(),
+                consultation.getPr(),
+                consultation.getHer2(),
+                consultation.getTnm(),
+                consultation.getHistologicType(),
+                consultation.getHistologicGrade(),
+                consultation.getCarcinomaInSitu(),
+                consultation.getNuclearHistologicGrade(),
+                consultation.getKi67(),
+                consultation.getDiagnostic(),
+                firstLine,
+                secondLine
+        );
+    }
 
     @Transactional
     public CreateConsultationResponsetDto createConsultation(CreateConsultationRequestDto createConsultationRequestDto) {
@@ -52,7 +104,6 @@ public class ConsultationService {
         consultation.setNuclearHistologicGrade(createConsultationRequestDto.nuclearHistologicGrade());
         consultation.setKi67(createConsultationRequestDto.ki67());
 
-        // Temporary information
         EsmoResult esmo = getEsmoResult(consultation);
         consultation.setDiagnostic(esmo.diagnostic());
 
@@ -69,7 +120,7 @@ public class ConsultationService {
         Consultation saved = consultationRepository.save(consultation);
 
         ConsultationAccessManager consultationAccessManager = new ConsultationAccessManager();
-        consultationAccessManager.setConsultation(consultation);
+        consultationAccessManager.setConsultation(saved);
         consultationAccessManager.setIsViewed(false);
         ConsultationAccessManager savedConsultationAccessManager = consultationAccessManagerRepository.save(consultationAccessManager);
 
