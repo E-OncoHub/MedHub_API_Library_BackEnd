@@ -18,6 +18,7 @@ import ro.ase.ro.api_oncohub_backend.models.ConsultationAccessManager;
 import ro.ase.ro.api_oncohub_backend.repositories.ConsultationAccessManagerRepository;
 import ro.ase.ro.api_oncohub_backend.repositories.ConsultationRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -60,6 +61,7 @@ public class ConsultationService {
         }
 
         consultationAccessManager.setIsViewed(true);
+        consultationAccessManager.setViewedAt(LocalDateTime.now());
         consultationAccessManagerRepository.save(consultationAccessManager);
 
         return new GetConsultationByClientDto(
