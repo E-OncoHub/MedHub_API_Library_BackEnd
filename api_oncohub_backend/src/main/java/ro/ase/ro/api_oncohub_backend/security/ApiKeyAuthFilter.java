@@ -23,6 +23,16 @@ public class ApiKeyAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
+
+        String requestPath = request.getRequestURI();
+        if (requestPath.startsWith("/api/v1/medhub/breastCancer")) {
+            var authentication = new UsernamePasswordAuthenticationToken(
+                    "anonymous", null, AuthorityUtils.createAuthorityList("READ_ONLY"));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String apiKey = request.getHeader(API_KEY_HEADER);
 
         if (apiKey != null) {

@@ -14,6 +14,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("api/v1/medhub/breastCancer")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ConsultationController {
     private final ConsultationService consultationService;
 

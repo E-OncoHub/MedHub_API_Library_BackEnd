@@ -13,6 +13,7 @@ import ro.ase.ro.api_oncohub_backend.services.ApiKeyService;
 @RestController
 @RequestMapping("api/v1/apiKey")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ApiKeyController {
     private final ApiKeyService apiKeyService;
 
