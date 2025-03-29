@@ -1,5 +1,6 @@
 package ro.ase.ro.api_oncohub_backend.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +26,8 @@ public class ConsultationController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createConsultation(@RequestBody CreateConsultationRequestDto consultationRequestDto) {
-        CreateConsultationResponsetDto createdConsultation = consultationService.createConsultation(consultationRequestDto);
+    public ResponseEntity<?> createConsultation(@RequestBody CreateConsultationRequestDto consultationRequestDto, HttpServletRequest request) {
+        CreateConsultationResponsetDto createdConsultation = consultationService.createConsultation(consultationRequestDto, request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new CreateConsultationResponsetDto(
                         createdConsultation.accessId(),

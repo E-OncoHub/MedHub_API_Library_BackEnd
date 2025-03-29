@@ -1,6 +1,7 @@
 package ro.ase.ro.api_oncohub_backend.services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,8 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class ConsultationService {
-    public final static String WEB_DOMAIN_NAME = "https://oncohub.com/medhub/breastCancer/";
+//    public final static String WEB_DOMAIN_NAME = "https://oncohub.com/medhub/breastCancer/";
+    public final static String WEB_DOMAIN_NAME = "http://localhost:3000/";
 
     private final ConsultationRepository consultationRepository;
     private final ConsultationAccessManagerRepository consultationAccessManagerRepository;
@@ -86,7 +88,7 @@ public class ConsultationService {
     }
 
     @Transactional
-    public CreateConsultationResponsetDto createConsultation(CreateConsultationRequestDto createConsultationRequestDto) {
+    public CreateConsultationResponsetDto createConsultation(CreateConsultationRequestDto createConsultationRequestDto, HttpServletRequest request) {
         if (createConsultationRequestDto.er() == null
                 || createConsultationRequestDto.pr() == null
                 || createConsultationRequestDto.ki67() == null
@@ -130,9 +132,10 @@ public class ConsultationService {
         consultationAccessManager.setIsViewed(false);
         ConsultationAccessManager savedConsultationAccessManager = consultationAccessManagerRepository.save(consultationAccessManager);
 
+        String apiKey = request.getHeader("X-API-KEY");
         return new CreateConsultationResponsetDto(
                 savedConsultationAccessManager.getId(),
-                WEB_DOMAIN_NAME + savedConsultationAccessManager.getId(),
+                WEB_DOMAIN_NAME + savedConsultationAccessManager.getId() + "?apiKey=" + apiKey,
                 saved.getDiagnostic(),
                 esmo.firstLine(),
                 esmo.secondLine()
