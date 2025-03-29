@@ -8,14 +8,14 @@ import ro.ase.ro.api_oncohub_backend.dtos.consultation.CreateConsultationRequest
 import ro.ase.ro.api_oncohub_backend.dtos.consultation.CreateConsultationResponsetDto;
 import ro.ase.ro.api_oncohub_backend.dtos.consultation.GetConsultationByClientDto;
 import ro.ase.ro.api_oncohub_backend.exceptions.ConsultationAlreadyViewedException;
-import ro.ase.ro.api_oncohub_backend.exceptions.InvalidConsultationDataException;
 import ro.ase.ro.api_oncohub_backend.exceptions.ConsultationNotFoundException;
+import ro.ase.ro.api_oncohub_backend.exceptions.InvalidConsultationDataException;
 import ro.ase.ro.api_oncohub_backend.services.ConsultationService;
 
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/medhub/breastCancer")
+@RequestMapping("api/v1/medhub/breastCancer")
 @RequiredArgsConstructor
 public class ConsultationController {
     private final ConsultationService consultationService;
@@ -26,8 +26,8 @@ public class ConsultationController {
             GetConsultationByClientDto consultation = consultationService.getNonAccessedConsultationById(idConsultationAccessManager);
             return ResponseEntity.status(HttpStatus.OK).body(consultation);
         } catch (ConsultationAlreadyViewedException e) {
-          return ResponseEntity.status(HttpStatus.CONFLICT)
-                  .body("Consultation already viewed.");
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Consultation already viewed.");
         } catch (ConsultationNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("No consultation found!");

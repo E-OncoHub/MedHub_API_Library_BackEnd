@@ -14,7 +14,7 @@ import ro.ase.ro.api_oncohub_backend.models.ApiKey;
 import ro.ase.ro.api_oncohub_backend.services.ApiKeyService;
 
 @RestController
-@RequestMapping("/apiKey")
+@RequestMapping("api/v1/apiKey")
 @RequiredArgsConstructor
 public class ApiKeyController {
     private final ApiKeyService apiKeyService;
@@ -22,13 +22,13 @@ public class ApiKeyController {
     @PostMapping
     public ResponseEntity<?> createApiKey(@RequestBody ApiKeyRequestDto requestDto) {
         try {
-          ApiKey apiKey = apiKeyService.generateApiKey(requestDto.description());
-          return ResponseEntity.status(HttpStatus.CREATED)
-                  .body(new ApiKeyResponseDto(
-                      apiKey.getKeyValue(),
-                      apiKey.getDescription(),
-                      apiKey.getExpiresAt()
-                  ));
+            ApiKey apiKey = apiKeyService.generateApiKey(requestDto.description());
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new ApiKeyResponseDto(
+                            apiKey.getKeyValue(),
+                            apiKey.getDescription(),
+                            apiKey.getExpiresAt()
+                    ));
         } catch (DuplicateApiKeyException | NullApiKeyException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ErrorResponse(e.getMessage()));
@@ -39,7 +39,7 @@ public class ApiKeyController {
     public ResponseEntity<?> getApiKey(@RequestBody ApiKeyRequestDto requestDto) {
         try {
             String keyValue = apiKeyService.getApiKeyByDescription(requestDto.description());
-            return  ResponseEntity.status(HttpStatus.OK)
+            return ResponseEntity.status(HttpStatus.OK)
                     .body(new ApiKeyByDescriptionResponseDto(keyValue));
         } catch (NullApiKeyException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)

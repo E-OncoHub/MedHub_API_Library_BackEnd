@@ -1,13 +1,14 @@
 package ro.ase.ro.api_oncohub_backend.models;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.proxy.HibernateProxy;
-import ro.ase.ro.api_oncohub_backend.dtos.esmo.TreatmentItemDto;
 
 import java.sql.Types;
-import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -66,7 +67,6 @@ public class Consultation {
     @Column(name = "SECOND_LINE_TREATMENT", columnDefinition = "nvarchar(MAX)")
     @JdbcTypeCode(Types.LONGNVARCHAR)
     private String secondLineTreatment;
-
 
 
     @Override
