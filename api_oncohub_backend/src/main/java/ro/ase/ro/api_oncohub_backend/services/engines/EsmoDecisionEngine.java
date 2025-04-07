@@ -24,8 +24,8 @@ public class EsmoDecisionEngine {
             firstLine = getAdvancedRecommendations(diagnostic);
             secondLine = getProgressionRecommendations(diagnostic);
         } else {
-            firstLine = getEarlyRecommendations(diagnostic);
-            secondLine = List.of(); //TODO: ESMO Early-stage progression not implemented yet
+            firstLine = getEarlyStageRecommendations(consultation);
+            secondLine = List.of(); // No second line for early-stage yet
         }
 
         return new EsmoResult(diagnostic, firstLine, secondLine);
@@ -37,29 +37,97 @@ public class EsmoDecisionEngine {
         final int her2 = safe(c.getHer2());
         final int ki67 = safe(c.getKi67());
 
-        if (er >= 1 && pr >= 1 && her2 < 10) {
+        boolean erPositive = er >= 10;
+        boolean prPositive = pr >= 10;
+        boolean her2Positive = her2 > 0;
+
+        if (erPositive && prPositive && !her2Positive) {
             return ki67 <= 14 ? "Luminal A" : "Luminal B HER2 negative";
-        } else if (er >= 1 && her2 >= 10) {
+        } else if (erPositive && her2Positive) {
             return "Luminal B HER2 positive";
-        } else if (er < 1 && pr < 1 && her2 < 10) {
+        } else if (!erPositive && !prPositive && !her2Positive) {
             return "Triple Negative Breast Cancer (TNBC)";
         } else {
             return "Unknown Diagnostic";
         }
     }
 
-    private List<TreatmentItemDto> getEarlyRecommendations(String diagnostic) {
-        return switch (diagnostic) {
-            case "Luminal A", "Luminal B HER2 negative" -> List.of(
-                    new TreatmentItemDto("ET + CDK4/6 inhibitor", "Standard for early luminal disease", null)
+    private List<TreatmentItemDto> getEarlyStageRecommendations(Consultation consultation) {
+        final int er = safe(consultation.getEr());
+        final int pr = safe(consultation.getPr());
+        final int her2 = safe(consultation.getHer2());
+        final String tnm = consultation.getTnm() != null ? consultation.getTnm() : "";
+
+        boolean erPositive = er >= 10;
+        boolean prPositive = pr >= 10;
+        boolean her2Positive = her2 > 0;
+        boolean her2Negative = her2 == 0;
+
+        boolean t1aOrT1b = tnm.contains("T1a") || tnm.contains("T1b");
+        boolean t1c = tnm.contains("T1c");
+        boolean t2 = tnm.contains("T2");
+        boolean n0 = tnm.contains("N0");
+        boolean n1n2n3 = tnm.contains("N1") || tnm.contains("N2") || tnm.contains("N3");
+
+        // Ramura 1: ER+ și PR+ (indiferent de HER2)
+        if (erPositive && prPositive) {
+            return List.of(
+                    new TreatmentItemDto("Adjuvant 1", "Ramura 1 - Linie 1", null),
+                    new TreatmentItemDto("Adjuvant 2", "Ramura 1 - Linie 2", null),
+                    new TreatmentItemDto("Surgery 3", "Ramura 1 - Linie 3", null)
             );
-            case "Triple Negative Breast Cancer (TNBC)" -> List.of(
-                    new TreatmentItemDto("Anthracycline + Taxane", "Standard chemotherapy regimen", null)
+        }
+
+        // Ramura 2: (ER+ sau PR+) și HER2-
+        if ((erPositive || prPositive) && her2Negative) {
+            return List.of(
+                    new TreatmentItemDto("Adjuvant 1", "Ramura 2 - Linie 1", null),
+                    new TreatmentItemDto("Adjuvant 2", "Ramura 2 - Linie 2", null),
+                    new TreatmentItemDto("Surgery 3", "Ramura 2 - Linie 3", null)
             );
-            default -> List.of(
-                    new TreatmentItemDto("No early-stage guidance", "Refer to specialist", null)
-            );
-        };
+        }
+
+        // Ramura 3: HER2+ și (ER+ sau PR+)
+        if (her2Positive && (erPositive || prPositive)) {
+            if (tnm.contains("T1") && n0) {
+                // T1N0
+                return List.of(
+                        new TreatmentItemDto("Adjuvant 1", "Ramura 3 - Subramura T1N0 - Linie 1", null),
+                        new TreatmentItemDto("Adjuvant 2", "Ramura 3 - Subramura T1N0 - Linie 2", null),
+                        new TreatmentItemDto("Surgery 3", "Ramura 3 - Subramura T1N0 - Linie 3", null)
+                );
+            } else if (t2 && n1n2n3) {
+                // T2 cu N1, N2, N3
+                return List.of(
+                        new TreatmentItemDto("Adjuvant 1", "Ramura 3 - Subramura T2N1/N2/N3 - Linie 1", null),
+                        new TreatmentItemDto("Adjuvant 2", "Ramura 3 - Subramura T2N1/N2/N3 - Linie 2", null),
+                        new TreatmentItemDto("Surgery 3", "Ramura 3 - Subramura T2N1/N2/N3 - Linie 3", null)
+                );
+            }
+        }
+
+        // Ramura 4: HER2- și ER- și PR-
+        if (her2Negative && !erPositive && !prPositive) {
+            if (t1aOrT1b && n0) {
+                // T1a/T1b și N0
+                return List.of(
+                        new TreatmentItemDto("Adjuvant 1", "Ramura 4 - Subramura T1a/T1bN0 - Linie 1", null),
+                        new TreatmentItemDto("Adjuvant 2", "Ramura 4 - Subramura T1a/T1bN0 - Linie 2", null),
+                        new TreatmentItemDto("Surgery 3", "Ramura 4 - Subramura T1a/T1bN0 - Linie 3", null)
+                );
+            } else if (t1c && n1n2n3) {
+                // T1c cu N1, N2, N3
+                return List.of(
+                        new TreatmentItemDto("Adjuvant 1", "Ramura 4 - Subramura T1cN1/N2/N3 - Linie 1", null),
+                        new TreatmentItemDto("Adjuvant 2", "Ramura 4 - Subramura T1cN1/N2/N3 - Linie 2", null),
+                        new TreatmentItemDto("Surgery 3", "Ramura 4 - Subramura T1cN1/N2/N3 - Linie 3", null)
+                );
+            }
+        }
+
+        return List.of(
+                new TreatmentItemDto("No early-stage guidance", "Refer to specialist", null)
+        );
     }
 
     private List<TreatmentItemDto> getAdvancedRecommendations(String diagnostic) {
