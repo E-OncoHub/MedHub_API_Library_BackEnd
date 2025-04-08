@@ -72,18 +72,16 @@ public class EsmoDecisionEngine {
         // Ramura 1: ER+ și PR+ (indiferent de HER2)
         if (erPositive && prPositive) {
             return List.of(
-                    new TreatmentItemDto("Adjuvant 1", "Ramura 1 - Linie 1", null),
-                    new TreatmentItemDto("Adjuvant 2", "Ramura 1 - Linie 2", null),
-                    new TreatmentItemDto("Surgery 3", "Ramura 1 - Linie 3", null)
+                    new TreatmentItemDto("Adjuvant", "Endocrine therapy", null)
             );
         }
 
         // Ramura 2: (ER+ sau PR+) și HER2-
         if ((erPositive || prPositive) && her2Negative) {
             return List.of(
-                    new TreatmentItemDto("Adjuvant 1", "Ramura 2 - Linie 1", null),
-                    new TreatmentItemDto("Adjuvant 2", "Ramura 2 - Linie 2", null),
-                    new TreatmentItemDto("Surgery 3", "Ramura 2 - Linie 3", null)
+                    new TreatmentItemDto("Adjuvant", "Neoadjuvant therapy", null),
+                    new TreatmentItemDto("Surgery", "Primary Surgery +/- RT", null),
+                    new TreatmentItemDto("Adjuvant", "Systematic treatment", null)
             );
         }
 
@@ -92,16 +90,15 @@ public class EsmoDecisionEngine {
             if (tnm.contains("T1") && n0) {
                 // T1N0
                 return List.of(
-                        new TreatmentItemDto("Adjuvant 1", "Ramura 3 - Subramura T1N0 - Linie 1", null),
-                        new TreatmentItemDto("Adjuvant 2", "Ramura 3 - Subramura T1N0 - Linie 2", null),
-                        new TreatmentItemDto("Surgery 3", "Ramura 3 - Subramura T1N0 - Linie 3", null)
+                        new TreatmentItemDto("Surgery", "Primary Surgery +/- RT", null),
+                        new TreatmentItemDto("Adjuvant", "Systematic treatment", null)
                 );
             } else if (t2 && n1n2n3) {
                 // T2 cu N1, N2, N3
                 return List.of(
-                        new TreatmentItemDto("Adjuvant 1", "Ramura 3 - Subramura T2N1/N2/N3 - Linie 1", null),
-                        new TreatmentItemDto("Adjuvant 2", "Ramura 3 - Subramura T2N1/N2/N3 - Linie 2", null),
-                        new TreatmentItemDto("Surgery 3", "Ramura 3 - Subramura T2N1/N2/N3 - Linie 3", null)
+                        new TreatmentItemDto("Adjuvant", "Neoadjuvant Therapy", null),
+                        new TreatmentItemDto("Surgery", "Primary Surgery +/- RT", null),
+                        new TreatmentItemDto("Adjuvant", "Systematic treatment", null)
                 );
             }
         }
@@ -111,16 +108,15 @@ public class EsmoDecisionEngine {
             if (t1aOrT1b && n0) {
                 // T1a/T1b și N0
                 return List.of(
-                        new TreatmentItemDto("Adjuvant 1", "Ramura 4 - Subramura T1a/T1bN0 - Linie 1", null),
-                        new TreatmentItemDto("Adjuvant 2", "Ramura 4 - Subramura T1a/T1bN0 - Linie 2", null),
-                        new TreatmentItemDto("Surgery 3", "Ramura 4 - Subramura T1a/T1bN0 - Linie 3", null)
+                        new TreatmentItemDto("Surgery", "Primary Surgery +/- RT", null),
+                        new TreatmentItemDto("Adjuvant", "Systematic treatment", null)
                 );
             } else if (t1c && n1n2n3) {
                 // T1c cu N1, N2, N3
                 return List.of(
-                        new TreatmentItemDto("Adjuvant 1", "Ramura 4 - Subramura T1cN1/N2/N3 - Linie 1", null),
-                        new TreatmentItemDto("Adjuvant 2", "Ramura 4 - Subramura T1cN1/N2/N3 - Linie 2", null),
-                        new TreatmentItemDto("Surgery 3", "Ramura 4 - Subramura T1cN1/N2/N3 - Linie 3", null)
+                        new TreatmentItemDto("Adjuvant", "Neoadjuvant Therapy", null),
+                        new TreatmentItemDto("Surgery", "Primary Surgery +/- RT", null),
+                        new TreatmentItemDto("Adjuvant", "Systematic treatment", null)
                 );
             }
         }
