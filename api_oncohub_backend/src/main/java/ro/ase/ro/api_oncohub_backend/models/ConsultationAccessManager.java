@@ -7,7 +7,6 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.proxy.HibernateProxy;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -26,8 +25,9 @@ public class ConsultationAccessManager {
     @Column(name = "ID", columnDefinition = "uniqueidentifier")
     private UUID id;
 
-    @OneToOne(fetch =  FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CONSULTATION_ID", nullable = false, unique = true)
+    @ToString.Exclude
     private Consultation consultation;
 
     @Column(name = "ISVIEWED", nullable = false)

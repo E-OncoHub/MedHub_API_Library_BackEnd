@@ -46,6 +46,9 @@ public class ConsultationService {
                     }
                 });
 
+        // update the consultation access manager to mark it as viewed
+
+
         Consultation consultation = consultationAccessManager.getConsultation();
 
         List<TreatmentItemDto> firstLine;
@@ -74,8 +77,7 @@ public class ConsultationService {
             throw new RuntimeException("Failed to parse treatment data", e);
         }
 
-        //TODO: Do not forget to set isViewed on true after dev phase
-        //        consultationAccessManager.setIsViewed(true);
+        consultationAccessManager.setIsViewed(true);
         consultationAccessManager.setViewedAt(LocalDateTime.now());
         consultationAccessManagerRepository.save(consultationAccessManager);
 
