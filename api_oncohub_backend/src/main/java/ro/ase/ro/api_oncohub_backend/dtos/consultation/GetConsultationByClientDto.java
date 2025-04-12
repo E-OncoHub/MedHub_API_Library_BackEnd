@@ -17,5 +17,6 @@ public record GetConsultationByClientDto(
         Integer ki67,
         String diagnostic,
         List<TreatmentItemDto> firstLine,
-        List<TreatmentItemDto> secondLine
+        List<TreatmentItemDto> secondLine,
+        List<TreatmentItemDto> thirdLine
 ) { }

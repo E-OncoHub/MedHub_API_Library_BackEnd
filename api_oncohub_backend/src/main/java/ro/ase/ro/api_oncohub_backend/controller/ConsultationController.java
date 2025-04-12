@@ -34,7 +34,8 @@ public class ConsultationController {
                         createdConsultation.accessLink(),
                         createdConsultation.diagnositc(),
                         createdConsultation.firstLine(),
-                        createdConsultation.secondLine()
+                        createdConsultation.secondLine(),
+                        createdConsultation.thirdLine()
                 ));
     }
 }

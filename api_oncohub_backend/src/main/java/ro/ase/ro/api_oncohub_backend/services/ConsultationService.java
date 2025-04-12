@@ -51,6 +51,7 @@ public class ConsultationService {
 
         List<TreatmentItemDto> firstLine;
         List<TreatmentItemDto> secondLine;
+        List<TreatmentItemDto> thirdLine;
 
         try {
             firstLine = objectMapper.readValue(
@@ -62,11 +63,17 @@ public class ConsultationService {
                     consultation.getSecondLineTreatment(),
                     new TypeReference<>() {}
             );
+
+            thirdLine = objectMapper.readValue(
+                    consultation.getThirdLineTreatment(),
+                    new TypeReference<>() {}
+            );
         } catch (Exception e) {
             throw new RuntimeException("Failed to parse treatment data", e);
         }
 
-        consultationAccessManager.setIsViewed(true);
+        //TODO: Do not forget to set isViewed on true after dev phase
+//        consultationAccessManager.setIsViewed(true);
         consultationAccessManager.setViewedAt(LocalDateTime.now());
         consultationAccessManagerRepository.save(consultationAccessManager);
 
@@ -83,7 +90,8 @@ public class ConsultationService {
                 consultation.getKi67(),
                 consultation.getDiagnostic(),
                 firstLine,
-                secondLine
+                secondLine,
+                thirdLine
         );
     }
 
@@ -118,9 +126,11 @@ public class ConsultationService {
         try {
             String firstLineJson = objectMapper.writeValueAsString(esmo.firstLine());
             String secondLineJson = objectMapper.writeValueAsString(esmo.secondLine());
+            String thirdLineJson = objectMapper.writeValueAsString(esmo.thirdLine());
 
             consultation.setFirstLineTreatment(firstLineJson);
             consultation.setSecondLineTreatment(secondLineJson);
+            consultation.setThirdLineTreatment(thirdLineJson);
         } catch (Exception e) {
             throw new RuntimeException("Failed to serialize treatment plans", e);
         }
@@ -135,10 +145,11 @@ public class ConsultationService {
         String apiKey = request.getHeader("X-API-KEY");
         return new CreateConsultationResponsetDto(
                 savedConsultationAccessManager.getId(),
-                WEB_DOMAIN_NAME + savedConsultationAccessManager.getId() + "?apiKey=" + apiKey,
+                WEB_DOMAIN_NAME + savedConsultationAccessManager.getId(),
                 saved.getDiagnostic(),
                 esmo.firstLine(),
-                esmo.secondLine()
+                esmo.secondLine(),
+                esmo.thirdLine()
         );
     }
 }

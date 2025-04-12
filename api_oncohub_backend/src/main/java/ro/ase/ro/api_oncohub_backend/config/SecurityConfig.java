@@ -27,7 +27,7 @@ public class SecurityConfig {
                 .addFilterBefore(new ApiKeyAuthFilter(apiKeyRepository), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/apiKey").permitAll()
-                        .requestMatchers("/api/v1/medhub/breastCancer/**").permitAll()
+                        .requestMatchers("/api/v1/medhub/breastCancer/{idConsultationAccessManager}").permitAll()
                         .anyRequest().authenticated()
                 )
                 .build();

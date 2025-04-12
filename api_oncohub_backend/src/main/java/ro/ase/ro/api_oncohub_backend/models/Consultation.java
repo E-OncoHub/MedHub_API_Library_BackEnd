@@ -68,6 +68,9 @@ public class Consultation {
     @JdbcTypeCode(Types.LONGNVARCHAR)
     private String secondLineTreatment;
 
+    @Column(name = "THIRD_LINE_TREATMENT", columnDefinition = "nvarchar(MAX)")
+    @JdbcTypeCode(Types.LONGNVARCHAR)
+    private String thirdLineTreatment;
 
     @Override
     public final boolean equals(Object o) {

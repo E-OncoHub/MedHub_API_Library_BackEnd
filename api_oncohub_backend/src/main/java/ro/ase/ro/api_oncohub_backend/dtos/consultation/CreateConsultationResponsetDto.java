@@ -10,5 +10,6 @@ public record CreateConsultationResponsetDto(
         String accessLink,
         String diagnositc,
         List<TreatmentItemDto> firstLine,
-        List<TreatmentItemDto> secondLine
+        List<TreatmentItemDto> secondLine,
+        List<TreatmentItemDto> thirdLine
 ) { }

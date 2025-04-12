@@ -19,16 +19,20 @@ public class EsmoDecisionEngine {
 
         List<TreatmentItemDto> firstLine;
         List<TreatmentItemDto> secondLine;
+        List<TreatmentItemDto> thirdLine;
 
         if (consultation.getTnm() != null && consultation.getTnm().contains("M1")) {
             firstLine = getAdvancedRecommendations(diagnostic);
             secondLine = getProgressionRecommendations(diagnostic);
+            thirdLine = List.of(); // No third line for advanced
         } else {
-            firstLine = getEarlyStageRecommendations(consultation);
-            secondLine = List.of(); // No second line for early-stage yet
+            List<TreatmentItemDto> earlyTreatments = getEarlyStageRecommendations(consultation);
+            firstLine = earlyTreatments.size() > 0 ? List.of(earlyTreatments.get(0)) : List.of();
+            secondLine = earlyTreatments.size() > 1 ? List.of(earlyTreatments.get(1)) : List.of();
+            thirdLine = earlyTreatments.size() > 2 ? List.of(earlyTreatments.get(2)) : List.of();
         }
 
-        return new EsmoResult(diagnostic, firstLine, secondLine);
+        return new EsmoResult(diagnostic, firstLine, secondLine, thirdLine);
     }
 
     public String determineDiagnostic(Consultation c) {
@@ -69,14 +73,12 @@ public class EsmoDecisionEngine {
         boolean n0 = tnm.contains("N0");
         boolean n1n2n3 = tnm.contains("N1") || tnm.contains("N2") || tnm.contains("N3");
 
-        // Ramura 1: ER+ și PR+ (indiferent de HER2)
         if (erPositive && prPositive) {
             return List.of(
                     new TreatmentItemDto("Adjuvant", "Endocrine therapy", null)
             );
         }
 
-        // Ramura 2: (ER+ sau PR+) și HER2-
         if ((erPositive || prPositive) && her2Negative) {
             return List.of(
                     new TreatmentItemDto("Adjuvant", "Neoadjuvant therapy", null),
@@ -85,16 +87,13 @@ public class EsmoDecisionEngine {
             );
         }
 
-        // Ramura 3: HER2+ și (ER+ sau PR+)
         if (her2Positive && (erPositive || prPositive)) {
             if (tnm.contains("T1") && n0) {
-                // T1N0
                 return List.of(
                         new TreatmentItemDto("Surgery", "Primary Surgery +/- RT", null),
                         new TreatmentItemDto("Adjuvant", "Systematic treatment", null)
                 );
             } else if (t2 && n1n2n3) {
-                // T2 cu N1, N2, N3
                 return List.of(
                         new TreatmentItemDto("Adjuvant", "Neoadjuvant Therapy", null),
                         new TreatmentItemDto("Surgery", "Primary Surgery +/- RT", null),
@@ -103,16 +102,13 @@ public class EsmoDecisionEngine {
             }
         }
 
-        // Ramura 4: HER2- și ER- și PR-
         if (her2Negative && !erPositive && !prPositive) {
             if (t1aOrT1b && n0) {
-                // T1a/T1b și N0
                 return List.of(
                         new TreatmentItemDto("Surgery", "Primary Surgery +/- RT", null),
                         new TreatmentItemDto("Adjuvant", "Systematic treatment", null)
                 );
             } else if (t1c && n1n2n3) {
-                // T1c cu N1, N2, N3
                 return List.of(
                         new TreatmentItemDto("Adjuvant", "Neoadjuvant Therapy", null),
                         new TreatmentItemDto("Surgery", "Primary Surgery +/- RT", null),
