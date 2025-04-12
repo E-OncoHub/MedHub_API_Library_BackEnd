@@ -1,19 +1,18 @@
 package ro.ase.ro.api_oncohub_backend.services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.transaction.annotation.Transactional;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.transaction.annotation.Transactional;
 import ro.ase.ro.api_oncohub_backend.dtos.consultation.CreateConsultationRequestDto;
 import ro.ase.ro.api_oncohub_backend.dtos.consultation.CreateConsultationResponsetDto;
 import ro.ase.ro.api_oncohub_backend.dtos.consultation.GetConsultationByClientDto;
 import ro.ase.ro.api_oncohub_backend.dtos.esmo.EsmoResult;
 import ro.ase.ro.api_oncohub_backend.dtos.esmo.TreatmentItemDto;
 import ro.ase.ro.api_oncohub_backend.exceptions.ConsultationAlreadyViewedException;
-import ro.ase.ro.api_oncohub_backend.exceptions.InvalidConsultationDataException;
 import ro.ase.ro.api_oncohub_backend.exceptions.ConsultationNotFoundException;
+import ro.ase.ro.api_oncohub_backend.exceptions.InvalidConsultationDataException;
 import ro.ase.ro.api_oncohub_backend.models.Consultation;
 import ro.ase.ro.api_oncohub_backend.models.ConsultationAccessManager;
 import ro.ase.ro.api_oncohub_backend.repositories.ConsultationAccessManagerRepository;
@@ -27,7 +26,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class ConsultationService {
-//    public final static String WEB_DOMAIN_NAME = "https://oncohub.com/medhub/breastCancer/";
+    //    public final static String WEB_DOMAIN_NAME = "https://oncohub.com/medhub/breastCancer/";
     public final static String WEB_DOMAIN_NAME = "http://localhost:3000/";
 
     private final ConsultationRepository consultationRepository;
@@ -56,24 +55,27 @@ public class ConsultationService {
         try {
             firstLine = objectMapper.readValue(
                     consultation.getFirstLineTreatment(),
-                    new TypeReference<>() {}
+                    new TypeReference<>() {
+                    }
             );
 
             secondLine = objectMapper.readValue(
                     consultation.getSecondLineTreatment(),
-                    new TypeReference<>() {}
+                    new TypeReference<>() {
+                    }
             );
 
             thirdLine = objectMapper.readValue(
                     consultation.getThirdLineTreatment(),
-                    new TypeReference<>() {}
+                    new TypeReference<>() {
+                    }
             );
         } catch (Exception e) {
             throw new RuntimeException("Failed to parse treatment data", e);
         }
 
         //TODO: Do not forget to set isViewed on true after dev phase
-//        consultationAccessManager.setIsViewed(true);
+        //        consultationAccessManager.setIsViewed(true);
         consultationAccessManager.setViewedAt(LocalDateTime.now());
         consultationAccessManagerRepository.save(consultationAccessManager);
 
@@ -96,7 +98,7 @@ public class ConsultationService {
     }
 
     @Transactional
-    public CreateConsultationResponsetDto createConsultation(CreateConsultationRequestDto createConsultationRequestDto, HttpServletRequest request) {
+    public CreateConsultationResponsetDto createConsultation(CreateConsultationRequestDto createConsultationRequestDto) {
         if (createConsultationRequestDto.er() == null
                 || createConsultationRequestDto.pr() == null
                 || createConsultationRequestDto.ki67() == null
@@ -142,7 +144,6 @@ public class ConsultationService {
         consultationAccessManager.setIsViewed(false);
         ConsultationAccessManager savedConsultationAccessManager = consultationAccessManagerRepository.save(consultationAccessManager);
 
-        String apiKey = request.getHeader("X-API-KEY");
         return new CreateConsultationResponsetDto(
                 savedConsultationAccessManager.getId(),
                 WEB_DOMAIN_NAME + savedConsultationAccessManager.getId(),
