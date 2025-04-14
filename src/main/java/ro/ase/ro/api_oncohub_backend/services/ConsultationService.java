@@ -27,7 +27,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ConsultationService {
     //    public final static String WEB_DOMAIN_NAME = "https://oncohub.com/medhub/breastCancer/";
-    public final static String WEB_DOMAIN_NAME = "http://localhost:3000/";
+    public final static String WEB_DOMAIN_NAME = "https://ashy-glacier-07e6ac203.6.azurestaticapps.net/";
 
     private final ConsultationRepository consultationRepository;
     private final ConsultationAccessManagerRepository consultationAccessManagerRepository;
