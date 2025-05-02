@@ -225,21 +225,18 @@ public class ConsultationService {
             return 20;
         }
 
-
         her2String = her2String.toLowerCase().trim();
+        Integer her2Numeric = parseNumericValue(her2String);
+
+        if (her2Numeric != null && her2Numeric > 0) {
+            return 20;
+        }
 
         if ((her2String.contains("low")
                 || her2String.contains("scor"))
                 || her2String.equals("0")
         ) {
             return -20;
-        }
-
-
-        Integer her2Numeric = parseNumericValue(her2String);
-
-        if (her2Numeric != null && her2Numeric > 0) {
-            return 20;
         }
 
         return dto.her2Numeric();
