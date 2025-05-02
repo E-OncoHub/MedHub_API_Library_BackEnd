@@ -220,20 +220,25 @@ public class ConsultationService {
         if (her2String == null) {
             return null;
         }
+        Integer her3Numeric = dto.her3();
+        if(her3Numeric != null) {
+            return 20;
+        }
+
 
         her2String = her2String.toLowerCase().trim();
 
-        if (her2String.contains("0 (scor") ||
-                (her2String.contains("low") && her2String.contains("scor"))) {
+        if ((her2String.contains("low")
+                || her2String.contains("scor"))
+                || her2String.equals("0")
+        ) {
             return -20;
         }
 
 
         Integer her2Numeric = parseNumericValue(her2String);
-        Integer her3Numeric = dto.her3();
 
-        if ((her2Numeric != null && her2Numeric > 0) ||
-                (her3Numeric != null && her3Numeric > 0)) {
+        if (her2Numeric != null && her2Numeric > 0) {
             return 20;
         }
 
