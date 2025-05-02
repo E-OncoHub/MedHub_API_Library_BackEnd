@@ -225,7 +225,7 @@ public class ConsultationService {
 
         if (her2String.contains("0 (scor") ||
                 (her2String.contains("low") && her2String.contains("scor"))) {
-            return 20;
+            return -20;
         }
 
 
@@ -234,7 +234,7 @@ public class ConsultationService {
 
         if ((her2Numeric != null && her2Numeric > 0) ||
                 (her3Numeric != null && her3Numeric > 0)) {
-            return -20;
+            return 20;
         }
 
         return dto.her2Numeric();
