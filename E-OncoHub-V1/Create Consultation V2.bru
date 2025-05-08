@@ -1,0 +1,31 @@
+meta {
+  name: Create Consultation V2
+  type: http
+  seq: 2
+}
+
+post {
+  url: https://oncohub-backend-a0gcdxeydhf9hchn.westeurope-01.azurewebsites.net/api/v2/medhub/breastCancer
+  body: json
+  auth: inherit
+}
+
+headers {
+  X-API-KEY: 2WC-ki1qKuwTZC8P-cd408af20635
+}
+
+body:json {
+  {
+    "protocolCarcMamInvaz": "2025/012",
+    "er": 0,
+    "pr": 0,
+    "her2": "low (scor 2+)",
+    // "her3": 21,
+    "tnm": "T4aN2M0",
+    "histologicType": "Invasive Lobular Carcinoma",
+    "histologicGrade": 2,
+    "carcinomaInSitu": "Lobular Carcinoma In Situ (LCIS)",
+    "nuclearHistologicGrade": "II",
+    "ki67": 20
+  }
+}
