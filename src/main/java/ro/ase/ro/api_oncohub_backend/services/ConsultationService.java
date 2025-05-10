@@ -226,6 +226,10 @@ public class ConsultationService {
         }
 
         her2String = her2String.toLowerCase().trim();
+        if (her2String.contains("positive")) {
+            return 20;
+        }
+
         Integer her2Numeric = parseNumericValue(her2String);
 
         if (her2Numeric != null && her2Numeric > 0) {
