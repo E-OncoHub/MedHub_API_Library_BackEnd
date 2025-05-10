@@ -68,7 +68,8 @@ public class EsmoDecisionEngine {
         boolean her2Negative = !her2Positive;
 
         boolean t1aOrT1b = tnm.contains("T1a") || tnm.contains("T1b");
-        boolean t1ct2t3 = tnm.contains("T1c") || tnm.contains("T2") || tnm.contains("T3") || tnm.contains("T4");
+        boolean t1ct1t2t3t4 = tnm.contains("T1c") || tnm.contains("T1") || tnm.contains("T2") || tnm.contains("T3") || tnm.contains("T4");
+        boolean t1 = tnm.contains("T1");
         boolean t2 = tnm.contains("T2");
         boolean n0 = tnm.contains("N0");
         boolean n1n2n3 = tnm.contains("N1") || tnm.contains("N2") || tnm.contains("N3");
@@ -103,12 +104,12 @@ public class EsmoDecisionEngine {
         }
 
         if (her2Negative && !erPositive && !prPositive) {
-            if (t1aOrT1b && n0) {
+            if (t1 && n0) {
                 return List.of(
                         new TreatmentItemDto("Surgery", "Primary Surgery +/- RT", null),
                         new TreatmentItemDto("Adjuvant", "Systematic treatment", null)
                 );
-            } else if (t1ct2t3 && n1n2n3) {
+            } else if (t1ct1t2t3t4 || n1n2n3) {
                 return List.of(
                         new TreatmentItemDto("Adjuvant", "Neoadjuvant Therapy", null),
                         new TreatmentItemDto("Surgery", "Primary Surgery +/- RT", null),
