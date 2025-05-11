@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import ro.ase.ro.api_oncohub_backend.dtos.esmo.neoadjuvant.NeoAdjuvantResponse;
 
 @Service
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class NeoadjuvantService {
     public NeoAdjuvantResponse getNeoAdjuvantPlanLayer2(Integer er, Integer pr, Integer her2, String tnm) {
         boolean hrPozitive = er > 0 || pr > 0;
