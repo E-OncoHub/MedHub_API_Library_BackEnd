@@ -17,7 +17,7 @@ import java.util.List;
 public class EsmoLayer2Controller {
     private final NeoadjuvantService neoAdjuvantService;
 
-    @GetMapping("/neoadjuvant-treatment")
+    @PostMapping("/neoadjuvant-treatment")
     public ResponseEntity<?> getNeoadjuvantTreatmentLayer2(@RequestBody NeoAdjuvantDto requestNeoAdjuvantDto) {
         NeoAdjuvantResponse response = neoAdjuvantService.getNeoAdjuvantPlanLayer2(
                 requestNeoAdjuvantDto.er(),
